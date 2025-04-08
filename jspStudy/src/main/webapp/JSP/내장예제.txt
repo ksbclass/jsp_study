@@ -1,0 +1,22 @@
+======= 내장 객체 =========
+1. request : 요청 객체 
+   setCharacterEncoding(인코딩방식)
+   파라미터 이름 : 전송 페이지 <input name="파라미터이름"...>
+                         <select name="파라미터이름"...>
+   getParameter("파라미터이름")
+   getParameterValues("파라미터이름")
+   getParameterNames() : 모든 파라미터의 이름을 Enumeration 객체로 리턴
+
+2. response : 응답 객체
+   sendRedirect("프로젝트 내부의 페이지 URL")
+
+3. pageContext : 현재 페이지의 자원 관리
+   forward(프로젝트 내부의 페이지 URL) : 서버 내에서 다른 페이지 요청
+   include(프로젝트 내부의 페이지 URL) : 서버 내에서 다른 페이지 포함. 변수 공유 안 됨.
+
+4. session : 브라우저 별로 연결 관리하는 객체. 브라우저의 상태 정보 저장 가능
+   setMaxInactiveInterval(초 단위) : 세션 유지 시간. 톰캣 기본값 30분으로 설정됨
+   setAttribute("속성명", 객체) : 속성 등록.
+   Object getAttribute("속성명") : 속성 조회. 형 변환 필요
+   removeAttribute("속성명") : 속성 제거
+   invalidate() : session 객체 종료. 새로운 session 객체로 치환.
