@@ -72,6 +72,11 @@
 		let op ="width=500,height=500,left=50,top=150";
 		open("pictureForm.jsp","",op);
 	}
+	function win_passchg() {
+		let op ="width=500,height=250,left=50,top=150";
+		open("passwordForm.jsp","",op);
+	}
+	
 </script>
 </form>
 </body>

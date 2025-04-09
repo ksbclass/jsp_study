@@ -19,7 +19,7 @@
 	
 	//2. 비밀번호 찾기
 	String pw = new MemberDao().pwSearch(id,email,tel);
-	if(pw == null) {
+	if(pw == null) { // 비밀번호 검색 완료
 %>
 <script type="text/javascript">
 	alert("정보에 맞는 비밀번호를 찾을 수 없습니다.")
@@ -28,7 +28,7 @@
 <% }else {%>
 <table>
   <tr>
-    <th>비밀번호</th><td>**<%=pw.substring(2)%></td>
+    <th>비밀번호</th><td>**<%=pw.substring(2,pw.length())%></td>
   </tr>
   <tr>
     <td colspan="2"><input type="button" value="닫기" onclick = "pwsend()"></td>
