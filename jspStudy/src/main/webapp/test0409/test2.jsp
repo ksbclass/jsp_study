@@ -18,15 +18,18 @@
 합계 : ${sum } <br>
 <h1>if 태그를 이용하여 출력하기</h1>
 <c:if test="${sum % 2 ==0}">
-	<h3>${sum }은 짝수입니다.</h3>
+	<h3>${sum }은 짝수입니다.</h3><br>
+</c:if>
+<c:if test="${sum % 2 ==1}">
+	<h3>${sum }은 홀수입니다.</h3><br>
 </c:if>
 <h1>choose when 태그를 이용하여 출력하기</h1>
 <c:choose>
 	<c:when test="${sum % 2 ==0}">
-		<h3>${sum }은 짝수입니다.</h3>
+		<h3>${sum }은 짝수입니다.</h3><br>
 	</c:when>
 	<c:otherwise>
-		<h3>${sum}은 홀수입니다.</h3>
+		<h3>${sum}은 홀수입니다.</h3><br>
 	</c:otherwise>
 </c:choose>
 </body>

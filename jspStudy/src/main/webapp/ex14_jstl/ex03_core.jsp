@@ -1,3 +1,5 @@
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -84,5 +86,36 @@
 		${i } * ${j } = ${i*j }<br> 
 	</c:forEach>
 </c:forEach>
+
+<h4>10에서 1까지 숫자 출력하기</h4>
+<c:set var="ii" value="${10 }" /> 
+<c:forEach  begin="1" end="10">
+	${ii}
+	<c:set var="ii" value="${ii-1 }"/>
+</c:forEach> <br>
+
+<h3>forEach 태그를 이용하여 List 객체의 요소 출력하기</h3>
+<%
+	List<Integer> list = new ArrayList<>();
+	for(int i = 1; i <= 10; i++) {
+		list.add(i*10);
+	}
+	pageContext.setAttribute("list", list);
+%>
+<!-- varStatus,var => 변수명(맘대로 설정 가능) -->
+<c:forEach var="i" items="${list}"  varStatus="stat"> 
+	${stat.index}:${i} &nbsp;&nbsp;&nbsp;
+</c:forEach><br>
+<h3>list를 2줄로 출력하기(index)</h3>
+<%-- list를 2줄로 출력하기 --%>
+<c:forEach var="i" items="${list}"  varStatus="stat"> 
+	<c:if test="${stat.index == 5}"><br></c:if>
+	${stat.index}:${i} &nbsp;&nbsp;&nbsp;
+</c:forEach><br>
+<h3>list를 2줄로 출력하기(count)</h3>
+<c:forEach var="i" items="${list}"  varStatus="stat"> 
+	<c:if test="${stat.index == 5}"><br></c:if>
+	${stat.count}:${i} &nbsp;&nbsp;&nbsp;
+</c:forEach><br>
 </body>
 </html>

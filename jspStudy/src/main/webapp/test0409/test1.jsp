@@ -20,14 +20,24 @@
 <c:if test="${param.x + param.y < 0}">
 	<h3>${param.x + param.y}은 음수입니다.</h3>
 </c:if>
+<h1>if 태그를 이용하여 출력하기</h1>
+<c:if test="${param.x + param.y > 0}">
+	<h3>${param.x + param.y}은 양수입니다.</h3>
+</c:if>
+<c:if test="${param.x + param.y == 0}">
+	<h3>${param.x + param.y}은 0입니다.</h3>
+</c:if>
 
 <h1>choose when 태그를 이용하여 출력하기</h1>
 <c:choose>
     <c:when test="${param.x + param.y < 0}">
         <h3>${param.x + param.y}은 음수입니다.</h3>
     </c:when>
-    <c:otherwise>
+    <c:when test="${param.x + param.y > 0}">
         <h3>${param.x + param.y}은 양수입니다.</h3>
+    </c:when>
+    <c:otherwise>
+        <h3>${param.x + param.y}은 0입니다.</h3>
     </c:otherwise>
 </c:choose>
 
