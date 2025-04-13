@@ -2,6 +2,6 @@
     pageEncoding="UTF-8"%>
 <script type="text/javascript">
 alert("${msg}");
-opener.document.f.id.value = "${id}";
+opener.document.f.id.value = "${id}";;
 self.close();
 </script>

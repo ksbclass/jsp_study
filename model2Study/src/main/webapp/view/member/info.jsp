@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>회원정보</title>
+<title>회원정보!</title>
 </head>
 <body>
 <%--

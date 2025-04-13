@@ -27,7 +27,7 @@ function input_check(e) { // e = this (form이 맞음)
 		return false;
 	}
 	if(e.pass.value.trim() == "") { // 비밀번호가 빈칸인경우
-		alert("비밀번호를 입력하세요")
+		alert("비밀번호를 입력하세요");
 		e.pass.focus();
 		return false;
 	}

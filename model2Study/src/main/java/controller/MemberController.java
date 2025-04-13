@@ -254,7 +254,7 @@ public class MemberController extends MskimRequestMapping {
 			request.setAttribute("msg", "아이디 : "+id.substring(0,id.length()-2));
 			request.setAttribute("id", id);
 		}
-		return "send";
+		return "send"; 
 	}
 //====================================================================================================
 		public String loginIdCheck(HttpServletRequest request, HttpServletResponse response) {

@@ -27,7 +27,7 @@
 <script type="text/javascript">
 	function  inputcheck(f) {
 		if(f.pass.value==""){
-			alert("비밀번호를 입력하세요")
+			alert("비밀번호를 입력하세요");
 			f.pass.focus();
 			return false;
 		}

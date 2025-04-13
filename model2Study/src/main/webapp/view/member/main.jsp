@@ -11,7 +11,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>회원관리</title>
+<title>회원관리!</title>
 </head>
 <body>
 <h3>${sessionScope.login}님이 로그인하셨습니다.</h3>

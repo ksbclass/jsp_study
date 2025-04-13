@@ -47,7 +47,7 @@
 	function idsend(id) { // id : 실제 id에서 뒤의 2자리를 제외한 값
 		//opener : loginForm.jsp
 		opener.document.f.id.value = id; // loginForm.jsp 페이지의 id값 입력. 
-		self.close(); // 현재 페이지를 닫기
+		self.close(); // 현재 페이지를 닫기!
 	}
 </script>
 </body>

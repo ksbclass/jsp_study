@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>수정 전 화면 조회</title>
+<title>수정 전 화면 조회!</title>
 </head>
 <body>
 <form action="update" name="f" method="post" onsubmit="return input_check(this)">

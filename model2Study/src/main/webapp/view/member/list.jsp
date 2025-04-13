@@ -34,7 +34,7 @@
 	   let cnt = 0;
 	   //  document.querySelectorAll(".idchk") : checkbox 태그들
        document.querySelectorAll(".idchk").forEach((idchk)=>{
-		   // idchk : checkbox 한개
+		   // idchk : checkbox 한개!
     	   if (idchk.checked) {
 			cnt++;
 			}
