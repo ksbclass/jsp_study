@@ -25,26 +25,29 @@ function inputchk(f) {
 <body>
 <div class="container">
 <h2 id="center">메일 보내기</h2>
-<form name="form1" method="post" action="mailSend.jsp"
+<form name="form1" method="post" action="mailSend"
 onsubmit="return inputchk(this)">
 	<table class="table">
 		<tr>
 			<td>보내는 사람</td>
-			<td>본인구글 ID : <input type="text" name="googleid" class="form-control">
-			본인 구글 비밀번호 : <input type="password" name="googlepw"class="form-control"></td>
+			<td>본인구글 ID : <input type="text" name="googleid" class="form-control" value="seokbum9809">
+			본인 구글 비밀번호 : <input type="password" name="googlepw"class="form-control" value="cekrxnojbdcqwfio"></td>
 		</tr>
 		<tr>
 			<td>받는사람</td>
 			<td><input type="text" name="recipient" class="form-control" value=
-			"<c:forEach items="${list}" var="m">${m.name} &lt;${m.email}&gt; </c:forEach>">
+			"<c:forEach items="${list}" var="m">${m.name} &lt;${m.email}&gt;,</c:forEach>">
+			<%-- 테스트1 <test1이메일정보>, 테스트2 <test2이메일정보>, --%>
 		</td></tr>
 		<tr>
 			<td>제목</td>
 			<td><input type="text" name="title" class="form-control">
 		</tr><tr><td>메시지 형식</td>
 			<td><select name="mtype" class="form-control">
+				 <%--수신메일에서 html태그 인식 --%>
 				<option value="text/html;charset=UTF-8">HTML
-				<option value="text/plain;charset=UTF-8">TEXT
+				<%--수신메일에서 html태그를 문자열로 인식 --%>
+				<option value="text/plain;charset=UTF-8">TEXT 
 			</select>
 			</td></tr>
 			<tr>

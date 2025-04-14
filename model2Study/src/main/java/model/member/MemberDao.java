@@ -194,7 +194,7 @@ public class MemberDao {
 		ResultSet rs = null;
 		StringBuilder sb = new StringBuilder();
 		for(int i=0;i<ids.length;i++) {
-			sb.append(""+ids[i] + ((i<ids.length-1)?",":""));
+			sb.append("'"+ids[i] + ((i<ids.length-1)?"',":"'"));
 		}
 		List<Member> list = new ArrayList<>();
 		String sql = "select * from member where id in("+sb.toString()+")";

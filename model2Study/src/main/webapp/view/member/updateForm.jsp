@@ -5,15 +5,14 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>수정 전 화면 조회!</title>
+<title>수정 전 화면 조회</title>
 </head>
 <body>
 <form action="update" name="f" method="post" onsubmit="return input_check(this)">
-<input type="hidden" name="picture" value="${mem.picture} %>">
+<input type="hidden" name="picture" value="${mem.picture}">
 <table> 
-	<caption>회원정보 수정</caption>
 	<tr><td rowspan="4" valign="bottom">
-	<img src="picture/${mem.picture}" width="100" height="120" id="pic"><br>
+	<img src="${pageContext.request.contextPath}/picture/${mem.picture}" width="100" height="120" id="pic"><br>
 	<font size="1"><a href="javascript:win_upload()">사진수정</a></font>
 	</td><th>아이디</th><td><input type="text" value="${mem.id}" name="id" readonly ></td></tr> 
 	<tr><th>비밀번호</th><td><input type="password" name="pass"></td></tr>
@@ -39,7 +38,7 @@
 		}
 	}
 	function win_passchg() {
-		let op ="width=500,height=250,left=50,top=150";
+		let op ="width=500,height=500,left=50,top=150";
 		open("passwordForm","",op);
 	}
 	function win_upload() {

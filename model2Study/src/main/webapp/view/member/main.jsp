@@ -1,10 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%-- 
-	1. 로그인 여부 검증 => main.jsp 페이지는 로그인 상태에서만 조회가 되어야 함.
-	   현재 로그인 상태 : 현재 화면 출력
-	   현재 로그아웃 상태 : 로그인이 필요한 화면입니다. 메시지 출력 후 loginForm.jsp 페이지로 이동
- --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>    
+<%-- /webapp/view/member/main.jsp--%>    
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,21 +9,14 @@
 <title>회원관리</title>
 </head>
 <body>
-<% String login = (String)session.getAttribute("login"); 
-   if ( login != null){
-%>
-<h3><%=login %>님이 로그인하셨습니다.</h3>
-<h3><a href="logout">로그아웃</a></h3>
-<h3><a href="info.jsp?id=<%=login%>">회원정보보기</a></h3> 
-<%-- 관리자로 로그인 된 경우 : 회원 목록 조회 --%>
-<% if(login.equals("admin")) {%>
-<h3><a href="list">회원목록보기</a></h3>
-<%} %>
-<% } else {  // 로그 아웃 상태 .session에 login 속성값이 없는 경우 %>
-<script type="text/javascript">
-	alert("로그인이 필요한 화면 입니다.");
-	location.href="loginForm";
-</script>
-<% } %>
+<div class="card">
+  <div class="card-header">${sessionScope.login}님이 로그인 하셨습니다.</div>
+  <div class="card-body">로그아웃</div>
+  <div class="card-footer"><a href="info?id=${sessionScope.login}">회원정보보기</a>
+   <c:if test="${sessionScope.login == 'admin'}">
+       <br><a href="list">회원목록보기</a>
+   </c:if> 
+  </div>
+</div>
 </body>
 </html>

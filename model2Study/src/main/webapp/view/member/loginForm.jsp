@@ -5,15 +5,15 @@
 <head>
 <meta charset="UTF-8">
 <title>로그인</title>
-<link rel="stylesheet" href="../css/main.css">
+
 </head>
 <body>
 <form action="login" method="post" name="f" onsubmit="return input_check(this)">
 <table><caption>로그인</caption>
-	<tr><th>아이디</th><td><input type="text" name="id"></td></tr>
-	<tr><th>비밀번호</th><td><input type="password" name="pass"></td></tr>
+	<tr><th>아이디</th><td><input type="text" name="id" class="form-control"></td></tr>
+	<tr><th>비밀번호</th><td><input type="password" name="pass"class="form-control"></td></tr>
 	<tr><td colspan="2"><button>로그인</button>
-	<button type="button" onclick="location.href='joinForm.jsp'">회원가입</button>
+	<button type="button" onclick="location.href='joinForm'">회원가입</button>
 	<button type="button" onclick="win_open('idForm')">아이디찾기</button>
 	<button type="button" onclick="win_open('pwForm')">비밀번호찾기</button>
 	</td></tr>
@@ -42,7 +42,7 @@ function input_check(e) { // e = this (form이 맞음)
 	return true;
 }
 function win_open(page) { // page : 아이디 찾기 클릭시 ->idForm
-	open(page+".jsp","","width=500,height=350,left=50,top=150"); // id,pass 찾기 버튼 클릭시 해당되는 jsp페이지 열기
+	open(page+"","","width=500,height=350,left=50,top=150"); // id,pass 찾기 버튼 클릭시 해당되는 jsp페이지 열기
 }
  </script>
 </body>
