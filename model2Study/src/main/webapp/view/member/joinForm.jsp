@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>회원 가입!</title>
+<title>회원 가입</title>
 <link rel="stylesheet" href="../css/main.css">
 </head>
 <body>
@@ -63,7 +63,7 @@
 	}
 	function win_upload() {
 		let op ="width=500,height=500,left=50,top=150";
-		open("pictureForm","",op);
+		open("pictureForm.jsp","",op);
 	}
 </script>
 </body>

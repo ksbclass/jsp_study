@@ -187,4 +187,36 @@ public class MemberDao {
 	    }
 	    return false;
 	}
+	public List<Member> emailList(String[] ids) {
+		// ids : 선택한 아이디 목록
+		Connection conn = DBConnection.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		StringBuilder sb = new StringBuilder();
+		for(int i=0;i<ids.length;i++) {
+			sb.append(""+ids[i] + ((i<ids.length-1)?",":""));
+		}
+		List<Member> list = new ArrayList<>();
+		String sql = "select * from member where id in("+sb.toString()+")";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				Member m = new Member();
+				m.setId(rs.getString("id"));
+				m.setName(rs.getString("name"));
+				m.setGender(rs.getInt("gender"));
+				m.setEmail(rs.getString("email"));
+				m.setTel(rs.getString("tel"));
+				m.setPicture(rs.getString("picture"));
+				list.add(m);
+			}
+			return list;
+		}catch (SQLException e) {
+	        e.printStackTrace();
+		}finally {
+        DBConnection.close(conn, pstmt, rs);
+	}
+    return null;
+	}
 }

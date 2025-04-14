@@ -256,6 +256,14 @@ public class MemberController extends MskimRequestMapping {
 		}
 		return "send"; 
 	}
+	@RequestMapping("mailFrom")
+	@MSLogin("loginAdminCheck")
+	public String mailFrom(HttpServletRequest request, HttpServletResponse response) {		
+		String[] ids = request.getParameterValues("idchks");
+		List<Member> list = dao.emailList(ids); 
+		request.setAttribute("list", list);
+		return "member/mailForm";
+	}
 //====================================================================================================
 		public String loginIdCheck(HttpServletRequest request, HttpServletResponse response) {
 			String id = request.getParameter("id");

@@ -7,7 +7,7 @@
 <title>아이디찾기</title>
 </head>
 <body>
-<h3>아이디 찾기!</h3>
+<h3>아이디 찾기</h3>
 <form action="id" method="post">
 <table>
 	<tr>
