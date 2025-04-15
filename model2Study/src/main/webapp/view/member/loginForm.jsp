@@ -9,7 +9,8 @@
 </head>
 <body>
 <form action="login" method="post" name="f" onsubmit="return input_check(this)">
-<table><caption>로그인</caption>
+<h3>로그인</h3>
+<table>
 	<tr><th>아이디</th><td><input type="text" name="id" class="form-control"></td></tr>
 	<tr><th>비밀번호</th><td><input type="password" name="pass"class="form-control"></td></tr>
 	<tr><td colspan="2"><button>로그인</button>

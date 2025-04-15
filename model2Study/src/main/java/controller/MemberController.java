@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -23,6 +24,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.oreilly.servlet.MultipartRequest;
 
 import gdu.mskim.MSLogin;
 import gdu.mskim.MskimRequestMapping;
@@ -417,11 +420,12 @@ public class MemberController extends MskimRequestMapping {
 		String email = request.getParameter("email");
 		String tel = request.getParameter("tel");
 		String id = dao.idSearch(email,tel);
-		if(id==null) {
+		if(id==null) { // id == null : id 값 없는 경우
 			request.setAttribute("msg", "해당되는 아이디가 없습니다");
 			request.setAttribute("url", "idForm");
 			return "alert";
 		}else {
+			// 뒤쪽 2자를 제외하고 jsp로 데이터 전달
 			id = id.substring(0, id.length() - 2);
 			request.setAttribute("id", id);
 			request.setAttribute("msg","('아이디 : " + id + "**')");
@@ -444,11 +448,11 @@ public class MemberController extends MskimRequestMapping {
 		String email = request.getParameter("email");
 		String tel = request.getParameter("tel");
 		String pw = dao.pwSearch(id, email, tel);
-		if(pw==null) {
+		if(pw==null) { // 비밀번호 검색 실패
 			request.setAttribute("msg", "정보에 맞는 비밀번호를 찾을 수 없습니다.");
 			request.setAttribute("url", "pwForm");
 			return "alert";
-		}else {
+		}else { // 비밀번호 검색 성공
 			StringBuilder sb = new StringBuilder();
 			sb.append("alert('비밀번호 : **" + pw.substring(2, pw.length()) + "');\n");
 			sb.append("self.close();");
@@ -457,8 +461,53 @@ public class MemberController extends MskimRequestMapping {
 		}
 		
 	}
-
-	
+	/*
+	 *  1. id 파라미터 
+	 *  2. id를 이용하여 db에서 조회.
+	 *  3. DB에서 조회 안되는 경우 : 사용가능한 아이디 입니다. 초록색으로 화면에 출력
+	 *     DB에서 조회 되는 경우 : 사용 중인 아이디 입니다. 빨강색 화면에 출력
+	 *  4. 닫기 버튼 클릭되면 화면 닫기
+	 */
+	@RequestMapping("idchk")
+	public String idchk(HttpServletRequest request, HttpServletResponse response) {
+		String id = request.getParameter("id");
+		Member mem = dao.selectOne(id);
+		String msg = null;
+		boolean able = true; //  able = true 사용가능
+		if(mem == null) {
+			msg ="사용가능한 아이디 입니다.";
+		}else { 
+			msg = "사용 중인 아이디 입니다.";
+			able = false;
+		}
+		request.setAttribute("msg", msg);
+		request.setAttribute("able", able);
+		return "member/idchk";
+	}
+	/*
+		1. request 객체로 이미지 업로드 불가 => cos.jar
+		2. 이미지 업로드 폴더 : 현재폴더/picture 설정
+		3. opener 화면에 이미지를 볼수 있도록 결과 전달 =>javascript
+		4. 현재화면을 close 하기 					=>javascript 
+	 */
+	@RequestMapping("picture")
+	public String picture(HttpServletRequest request, HttpServletResponse response) {
+		String path = request.getServletContext().getRealPath("")+ "picture/";
+		String fname = null;
+		File f = new File(path); 
+		if(!f.exists()){ 
+			f.mkdirs(); 
+		}
+		MultipartRequest multi = null;
+		try {
+			multi =	new MultipartRequest(request,path,10*1024*1024,"utf-8");
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+		fname = multi.getFilesystemName("picture");
+		request.setAttribute("fname", fname);
+		return "member/picture";
+	}
 	
 //=======================================================================================================================================================
 	public String passwordLoginCheck(HttpServletRequest request, HttpServletResponse response) {

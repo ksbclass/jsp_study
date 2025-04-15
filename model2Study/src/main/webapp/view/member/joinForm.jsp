@@ -10,26 +10,27 @@
 <body>
 <form action="join" name="f" method="post" onsubmit="return input_check(this)">
   <input type="hidden" name="picture" value=""> <%-- 업로드된 이미지의이름 --%>
-  <table>
+  <table class="table">
     <tr><td rowspan="4" valign="bottom">
-       <img src="" width="100" height="120" id="pic"><br>
+       <img src="" width="200" height="120" id="pic"><br>
        <font size="1"><a href="javascript:win_upload()">사진등록</a></font>
     </td><th>아이디</th>
-    <td><input type="text" name="id">
-    <button type="button" onclick="idchk()">중복검색</button>
+    <td><input type="text" name="id" class="form-control">
+    <button type="button" onclick="idchk()" class="btn btn-primary">중복검색</button>
     </td></tr>
-    <tr><th>비밀번호</th><td><input type="password" name="pass"></td></tr>
-    <tr><th>이름</th><td><input type="text" name="name"></td></tr>
+    <tr><th>비밀번호</th><td><input type="password" name="pass" class="form-control"></td></tr>
+    <tr><th>이름</th><td><input type="text" name="name"class="form-control"></td></tr>
     <tr><th>성별</th>
-    <td><label for="gender1">남</label>
-      <input type="radio" id="gender1" name="gender" value="1">
-      <label for="gender2">여</label>
+    <td>
+      <input type="radio" id="gender1" name="gender" value="1" >
+      <label  for="gender1" >남</label>&nbsp;&nbsp;
       <input type="radio" id="gender2" name="gender" value="2">
+      <label for="gender2">여</label>
     </td></tr>
-    <tr><th>전화번호</th><td colspan="2"><input type="text" name="tel"></td></tr>
-    <tr><th>이메일</th><td colspan="2"><input type="text" name="email"></td></tr>
+    <tr><th>전화번호</th><td colspan="2"><input type="text" name="tel" class="form-control"></td></tr>
+    <tr><th>이메일</th><td colspan="2"><input type="text" name="email" class="form-control"></td></tr>
     <%-- button 태그의 기본 type은 submit임. --%>
-    <tr><td colspan="3"><button>회원가입</button></tr>
+    <tr><td colspan="3"><button class="btn btn-success">회원가입</button></tr>
   </table></form>
   <script type="text/javascript">
      function input_check(f) {
@@ -63,7 +64,7 @@
      }
    function win_upload() {
 	   let op = "width=500,height=500,left=50,top=150";
-	   open("pictureForm.jsp","",op);
+	   open("pictureForm","",op);
    }
    function isValidEmail(email) {
 	   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -73,5 +74,14 @@
 	   const regex = /^(02|01[016789])-?\d{3,4}-?\d{4}$/;
 	   return regex.test(tel);
     }
+   function idchk() {
+	if(document.f.id.value == '') {
+		alert("아이디를 입력하세요");
+		document.f.id.focus();
+	}else {
+		let op = "width=500,height=500,left=50,top=150";
+		open("idchk?id="+document.f.id.value,"",op);
+	}
+}
   </script>
   </body></html>

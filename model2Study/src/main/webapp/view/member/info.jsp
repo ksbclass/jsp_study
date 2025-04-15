@@ -15,7 +15,8 @@
 					
 	${mem.id} : mem.getId() 메서드 호출
  --%>
-<table><caption>회원정보</caption>
+ <h3>회원정보</h3>
+<table>
 <tr><td rowspan="6" width="30%">
 	<img src="../picture/${mem.picture}" width="200" height="210"></td>
 	<th width="20%">아이디</th><td>${mem.id}</td>

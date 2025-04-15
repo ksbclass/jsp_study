@@ -10,8 +10,7 @@
 </head>
 <body>
 <div class="card">
-  <div class="card-header">${sessionScope.login}님이 로그인 하셨습니다.</div>
-  <div class="card-body">로그아웃</div>
+  <div class="card-header">${sessionScope.login}님이 로그인 하셨습니다.</div>	
   <div class="card-footer"><a href="info?id=${sessionScope.login}">회원정보보기</a>
    <c:if test="${sessionScope.login == 'admin'}">
        <br><a href="list">회원목록보기</a>
