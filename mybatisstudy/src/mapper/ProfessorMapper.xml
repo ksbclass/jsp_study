@@ -8,7 +8,7 @@
 	  <select id="list" resultType="Professor">
 	 	select * from professor
 	 </select>
-	 <select id="selectdeptno" resultType="Professor" parameterType="String">
+	 <select id="selectdeptno" resultType="Professor" parameterType="int">
 	 	select * from professor where deptno = ${value};
 	 </select>
 	 <select id="selectname" resultType="Professor" parameterType="map">

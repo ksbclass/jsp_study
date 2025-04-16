@@ -30,20 +30,27 @@ public class Test2 {
 		}catch(IOException e) {
 			e.printStackTrace();
 		}
+		// 1. 교수테이블에 등록된 레코드의 건수를 출력하기.
 		int x = 0;
 		SqlSession session = sqlMap.openSession();
 		x=(Integer)session.selectOne("professor.count");
 		System.out.println("교수테이블의 등록된 레코드의 건수 : " + x);
+
+		// 2. 교수테이블에 등록된 모든 정보를 출력하기
 		System.out.println("교수테이블의 등록된 레코드의 정보 조회하기");
 		List<Professor> list = session.selectList("professor.list");
 		for(Professor p : list) {
 			System.out.println(p);
 		}
+		
+		// 3. 교수중 101번 학과의 교수 정보를 출력하기
 		System.out.println("교수중 101번 학과의 교수 정보 조회하기");
 		list = session.selectList("professor.selectdeptno","101");
 		for(Professor p : list) {
 			System.out.println(p);
 		}
+		
+		// 4. 교수중 성이 김씨인 시간강사 정보를 출력하기 
 		System.out.println("교수중 성이 김씨인 시간강사 정보 조회하기");
 		Map<Object,String> map = new HashMap<>();
 		map.put("name", "김");
