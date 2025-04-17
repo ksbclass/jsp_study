@@ -45,15 +45,4 @@ public interface Membermapper {
             "</script>"})
 	List<Member> emailList(Map<String, Object> map);
 	
-	
-
-
-	
-	
-	
-
-	
-
-
-	
 }
