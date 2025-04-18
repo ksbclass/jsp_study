@@ -2,6 +2,7 @@ package controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.annotation.WebInitParam;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.oreilly.servlet.MultipartRequest;
 
+import gdu.mskim.MSLogin;
 import gdu.mskim.MskimRequestMapping;
 import gdu.mskim.RequestMapping;
 import model.board.Board;
@@ -20,6 +22,28 @@ import model.board.BoardDao;
 public class BoardController extends MskimRequestMapping {
 	private BoardDao dao = new BoardDao();
 
+	public String noticecheck (HttpServletRequest request, HttpServletResponse response) {
+		String boardid = (String)request.getSession().getAttribute("boardid");
+		if(boardid == null) {
+			boardid = "1";
+		}
+		String login = (String) request.getSession().getAttribute("login");
+		if(boardid.equals("1")) {
+			if(login == null || !login.equals("admin")) {
+				request.setAttribute("msg","공지사항은 관리자만 가능합니다.");
+				request.setAttribute("url",request.getContextPath()+"/board/list?boardid=" +boardid);
+				return "alert";
+			}
+		}
+		return null;
+	}
+	@RequestMapping("writeForm")
+	@MSLogin("noticecheck")
+	public String writeForm(HttpServletRequest request, HttpServletResponse response) {
+		return "board/writeForm";
+	}
+	
+	@MSLogin("noticecheck")
 	@RequestMapping("write")
 	public String write(HttpServletRequest request, HttpServletResponse response) {
 		// 파일 업로드 되는 폴더 설정
@@ -142,6 +166,7 @@ public class BoardController extends MskimRequestMapping {
 	    request.setAttribute("endpage", endpage); // 페이지의 마지막 번호
 	    request.setAttribute("maxpage", maxpage); // 페이지의 최대 번호
 	    request.setAttribute("boardnum", boardnum);
+	    request.setAttribute("today", new Date());
 	    return "board/list";
 	}
 	
@@ -156,10 +181,172 @@ public class BoardController extends MskimRequestMapping {
 	@RequestMapping("info")
 	public String info(HttpServletRequest request, HttpServletResponse response) {
 		int num = Integer.parseInt(request.getParameter("num"));
+//		String boardid = (String)request.getSession().getAttribute("boardid");
 		Board b = dao.selectOne(num);
-		
+		String boardid = b.getBoardid();
 		dao.readcntAdd(num);
+		String boardName = "공지사항";
+		if(boardid.equals("2")) {
+			boardName = "자유게시판";
+		}
 		request.setAttribute("b",b);
+		request.setAttribute("boardName", boardName);
+		request.setAttribute("boardid", boardid);
 		return "board/info";
+	}
+	@RequestMapping("replyForm")
+	@MSLogin("noticecheck")
+	public String replyForm(HttpServletRequest request, HttpServletResponse response) {
+		int num = Integer.parseInt(request.getParameter("num"));
+		Board b = dao.selectOne(num);
+		request.setAttribute("board",b);
+		return "board/replyForm";
+	}
+	/*
+	 1. 파라미터 값을 Board 객체에 저장
+	 	원글 정보 : num, grp, grplevel, grpstep, boardid 
+	 	답글 정보 : writer,pass,title,content => 입력한 내용
+	 2. 같은 grp에 속하는 게시물들의 grpstep 값을 1 증가시키기
+	 	void BoardDao.grpStepAdd(grp,grpstep)
+	 3. Board 객체를 이용하여 저장된 답글 정보를 db에 추가하기
+	 	num : maxnum + 1
+	 	grp : 원글과 동일
+	 	grplevel : 원글의 grplevel + 1
+	 	grpstep : 원글의 grpstep + 1
+	 	boardid : 원글과 동일
+	 4. list로 페이지 이동.(추가 등록성공)
+	 	replyForm 페이지로 이동(추가 실패)
+	 */
+	@RequestMapping("reply")
+	@MSLogin("noticecheck")
+	public String reply(HttpServletRequest request, HttpServletResponse response) {
+		Board board = new Board();
+		// 원글정보
+		int num = Integer.parseInt(request.getParameter("num"));
+		int grp = Integer.parseInt(request.getParameter("grp"));
+		int grplevel = Integer.parseInt(request.getParameter("grplevel"));
+		int grpstep = Integer.parseInt(request.getParameter("grpstep"));
+		String boardid = request.getParameter("boardid");
+		// 답글정보
+		board.setGrp(grp);
+		board.setBoardid(boardid);
+		board.setWriter(request.getParameter("writer"));
+		board.setPass(request.getParameter("pass"));
+		board.setTitle(request.getParameter("title"));
+		board.setContent(request.getParameter("content"));
+		
+		dao.grpStepAdd(grp,grpstep);		
+		//db에 정보 추가
+		board.setNum(dao.maxnum()+1);
+		board.setGrplevel(grplevel+1);
+		board.setGrpstep(grpstep+1);
+		
+		if(dao.insert(board)) {
+			return "redirect:list?boardid=" + boardid;
+		}else {
+			request.setAttribute("msg", "답변 등록 실패");
+			request.setAttribute("url", "replyForm?num=" + num);
+			return "alert";
+		}
+	}
+	@RequestMapping("updateForm")
+	@MSLogin("noticecheck")
+	public String updateForm(HttpServletRequest request, HttpServletResponse response) {
+		int num = Integer.parseInt(request.getParameter("num"));
+		Board b = dao.selectOne(num);
+		request.setAttribute("b",b);
+		return "board/updateForm";
+	}
+	/*
+	 1. 파라미터 정보를 Board 객체에 저장 => request 객체 사용 불가.
+	 2. 비밀번호 검증 : 비밀번호 오류시, 메시지 출력 updateForm 페이지 이동
+	 3. 게시물 수정 : Boolean BoardDao.update(Board 객체)
+	  	- 첨부파일이 없는경우 -> file2의 내용을 다시 저장하기
+	 4. 수정 성공 : info 페이지로 이동
+	 	수정 실패 : 수정 실패 메시지 출력후 updateForm 페이지로 이동 
+	 */
+	@MSLogin("noticecheck")
+	@RequestMapping("update")
+	public String update(HttpServletRequest request, HttpServletResponse response) {
+		String path = request.getServletContext().getRealPath("/") + "upload/board/";
+		File f = new File(path);
+		if (!f.exists()) {
+			f.mkdirs();
+		}
+		int size = 10 * 1024 * 1024;
+		MultipartRequest multi = null;
+		try {
+			multi = new MultipartRequest(request, path, size, "UTF-8");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Board b = new Board();
+		b.setNum(Integer.parseInt(multi.getParameter("num")));
+		b.setWriter(multi.getParameter("writer"));
+		b.setPass(multi.getParameter("pass"));
+		b.setTitle(multi.getParameter("title"));
+		b.setContent(multi.getParameter("content"));
+		b.setRegdate(new Date());
+		// 첨부파일 수정.
+		b.setFile1(multi.getFilesystemName("file1"));
+		
+		// 첨부파일 수정 안됨
+		if(b.getFile1()==null || b.getFile1().equals("")) {
+			b.setFile1(multi.getParameter("file2"));
+		}
+		Board dbBoard = dao.selectOne(b.getNum());
+		String msg = "비밀번호가 틀렸습니다.";
+		String url = "updateForm?num=" + b.getNum();
+		// board.getPass() : 입력된 비밀번호
+		// dbboard.getPass() : 저장된 비밀번호
+		if(b.getPass().equals(dbBoard.getPass())) {
+	 		if(dao.update(b)) {
+	 			return "redirect:info?num="+b.getNum();
+	 		}else {
+	 			msg= "게시물 수정실패";
+	 		}
+	 	}
+		request.setAttribute("msg", msg);
+		request.setAttribute("url", url);
+	 	return "alert";
+	}
+	/*
+	 	1. num,pass 파라미터를 변수에 저장
+	 	2. 비밀번호 검증
+	 	   틀린경우 : 메세지 출력, deleteForm 페이지로 이동
+	 	3. 답변글이 있는 원글인 경우 삭제불가
+	 		답변글 삭제후 삭제 가능 메시지 출력. list 페이지 이동
+	 	4. 게시물 삭제
+	 		boolean BoardDao.delete(num)
+	 		삭제 성공 : list로 페이지 이동
+	 		삭제 실패 : 삭제 실패 메시지 출력.deleteForm 페이지 이동
+	 */
+	@RequestMapping("delete")
+	@MSLogin("noticecheck")
+	public String delete(HttpServletRequest request, HttpServletResponse response) {
+		int num = Integer.parseInt(request.getParameter("num"));
+		String pass = request.getParameter("pass");
+		Board dbBoard = dao.selectOne(num);
+		if(pass.equals(dbBoard.getPass())) {
+			if(!dao.check(num)) {
+				if(dao.delete(num)) {
+					request.setAttribute("msg", "게시글 삭제가 완료 되었습니다.");
+					request.setAttribute("url", "list?boardid="+ dbBoard.getBoardid());
+					return "alert";
+				}else {
+					request.setAttribute("msg", "게시글 삭제가 실패하였습니다.");
+					request.setAttribute("url", "deleteForm?num="+num);
+					return "alert";
+				}
+			}else {
+				request.setAttribute("msg", "답변글 삭제후 삭제가 가능합니다.");
+				request.setAttribute("url", "list?boardid="+ dbBoard.getBoardid());
+				return "alert";
+			}
+		}
+		request.setAttribute("msg", "비밀번호가 틀렸습니다.");
+		request.setAttribute("url", "deleteForm?num="+num);
+		return "alert";
+		
 	}
 }

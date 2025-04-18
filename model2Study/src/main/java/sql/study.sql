@@ -14,3 +14,6 @@ CREATE TABLE board (
 );
 
 select * from board;
+
+select * from book;
+

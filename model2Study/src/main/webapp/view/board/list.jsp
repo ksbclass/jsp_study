@@ -44,11 +44,30 @@
 				<c:if test="${empty b.file1}">
 					&nbsp;&nbsp;&nbsp;
 				</c:if>
+				<%-- 답글인 경우 level 만큼 공백주기 --%>
+				<c:if test="${b.grplevel > 0}">
+					<c:forEach var="i" begin="1" end="${b.grplevel}">
+						&emsp;
+					</c:forEach>└
+				</c:if>
 					<a href="info?num=${b.num}">		
 				${b.title}</a>
 			</td>
-			<td>${b.writer }</td>	
-			<td>${b.regdate }</td>	
+			<td>${b.writer }</td>
+			<%--
+			오늘 등록된 게시물의 형식 : HH:mm:ss 형식으로
+			이전 등록된 게시물 형식은 등록일자 출력 : yyyy-MM-dd HH:mm:ss 형식으로 변경하기
+			 --%>
+			 <fmt:formatDate value="${b.regdate}" pattern="yyyy-MM-dd" var="rdate"/>	
+			 <fmt:formatDate value="${today}" pattern="yyyy-MM-dd" var="tdate"/>				 	
+			<td>
+				<c:if test="${rdate == tdate}">
+				<fmt:formatDate value="${b.regdate}" pattern="HH:mm:ss"/>
+				</c:if>
+				<c:if test="${rdate != tdate}">
+				<fmt:formatDate value="${b.regdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+				</c:if>
+			</td>	
 			<td>${b.readcnt}</td>	
 		</tr>
 		
@@ -62,13 +81,13 @@
 				<a href="list?pageNum=${pageNum-1}">[이전]</a>
 			</c:if>
 			<c:forEach var="a" begin="${startpage}" end="${endpage}">
-				<c:if test="${a == pageNum}"><a href="list?pageNum=${a}"> [${a}]</a></c:if>
+				<c:if test="${a == pageNum}"><a href="#"> [${a}]</a></c:if>
 				<c:if test="${a != pageNum}">
 					<a href="list?pageNum=${a}"> [${a}]</a>
 				</c:if>
 			</c:forEach>
 			<c:if test="${pageNum >= maxpage}">
-				[[다음]
+				[다음]
 			</c:if>
 			<c:if test="${pageNum < maxpage}">
 				<a href="list?pageNum=${pageNum+1}">[다음]</a>
@@ -76,11 +95,14 @@
 			</td>
 	</tr>
 	</c:if>
+	<%-- 1.공지사항 게시판인 경우 관리자 로그인한 경우만 글쓰기 출력하기--%>
+	<c:if test="${boardid != 1 || sessionScope.login == 'admin'}">
 	<tr>
 		<td colspan="5" style="text-align:right">
 			<p align="right"><a href="writeForm">[글쓰기]</a></p>
 		</td>
 	</tr>
+	</c:if>
 </table>
 </body>
 </html>

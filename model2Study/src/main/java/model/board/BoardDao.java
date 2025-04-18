@@ -83,16 +83,65 @@ public class BoardDao {
 		return null;
 	}
 
-	public boolean readcntAdd(int num) {
+	public void readcntAdd(int num) {
 		SqlSession session = MybatisConnection.getConnection();
 		try {
-			return session.getMapper(cls).readcntAdd(num) > 0;
-		}catch (Exception e) {
+			session.getMapper(cls).readcntAdd(num);
+		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
 			MybatisConnection.close(session);
 		}
-		return false;
+	}
+
+
+	public void grpStepAdd(int grp, int grpstep) {
+		SqlSession session = MybatisConnection.getConnection();
+		try {
+			session.getMapper(cls).grpStepAdd(grp,grpstep);
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			MybatisConnection.close(session);
+		}
+		
+	}
+
+	public boolean update(Board b) {
+		SqlSession session = MybatisConnection.getConnection();
+	    try {
+	    	return session.getMapper(cls).Update(b) >0; 
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        MybatisConnection.close(session);
+	    }
+	    return false;
+
+	}
+
+	public boolean delete(int num) {
+		SqlSession session = MybatisConnection.getConnection();
+	    try {
+	    	return session.getMapper(cls).delete(num) >0; 
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        MybatisConnection.close(session);
+	    }
+	    return false;
+	}
+
+	public boolean check(int num) {
+		SqlSession session = MybatisConnection.getConnection();
+	    try {
+	    	return session.getMapper(cls).check(num) > 0; 
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        MybatisConnection.close(session);
+	    }
+	    return false;
 	}
 
 }
