@@ -12,10 +12,10 @@ import gdu.mskim.RequestMapping;
 import model.book.Book;
 import model.book.BookDao;
 
+// http://localhost:8080/model2Study/book/bookForm 
 @WebServlet(urlPatterns = { "/book/*" }, initParams = { @WebInitParam(name = "view", value = "/view/") })
 public class BookController extends MskimRequestMapping  {
-	private BookDao dao = new BookDao();
-	
+	private BookDao dao = new BookDao();	
 	@RequestMapping("bookwrite")
 	public String bookwrite(HttpServletRequest request, HttpServletResponse response) {
 		Book book = new Book();
@@ -25,8 +25,8 @@ public class BookController extends MskimRequestMapping  {
 		if(dao.insert(book)) {
 			return "redirect:bookList";
 		}
-		request.setAttribute("msg","게시글 등록 실패");
-		request.setAttribute("url", "bookwrite");
+		request.setAttribute("msg","방명록 등록시 오류 발생 ");
+		request.setAttribute("url", "bookForm");
 		return "alert";
 	}
 	@RequestMapping("bookList")
@@ -34,7 +34,8 @@ public class BookController extends MskimRequestMapping  {
 		
 		List<Book> list = dao.list();
 		request.setAttribute("list", list);
-		return "book/bookList";
+		return "book/bookList"; // view 로forward 함
+								// view : webapp/view/book.bookList.jsp
 		
 	}
 }

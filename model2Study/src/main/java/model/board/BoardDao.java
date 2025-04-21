@@ -38,10 +38,22 @@ public class BoardDao {
 		return false;
 	}
 
-	public int boardCount(String boardid) {
+	public int boardCount(String boardid, String column, String find) {
 		SqlSession session = MybatisConnection.getConnection();
 		try {
-			return session.getMapper(cls).count(boardid);
+			map.clear();
+			map.put("boardid",boardid);
+			map.put("column",column);
+			map.put("find",find);
+			if(column != null) {
+				String[] cols = column.split(",");
+				switch(cols.length) { // 검색 내용이 존재
+				case 3 : map.put("col3",cols[2].trim());
+				case 2 : map.put("col2",cols[1].trim());
+				case 1 : map.put("col1",cols[0].trim());
+				}
+			}
+			return session.getMapper(cls).count(map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -50,18 +62,28 @@ public class BoardDao {
 		return 0;
 	}
 
-	public List<Board> list(String boardid, int pageNum, int limit) {
+	public List<Board> list(String boardid, int pageNum, int limit, String column, String find) {
 		SqlSession session = MybatisConnection.getConnection();
 		try {
 			map.clear();
 			map.put("boardid", boardid); // 게시판 종류
-			map.put("start", (pageNum - 1) * limit); 
+			map.put("start", (pageNum - 1) * limit);
 			/*
 			 	 pageNum	  start
 			 		1			0
 			 		2			10
 			 */
 			map.put("limit", limit);
+			map.put("column",column);
+			map.put("find",find);
+			if(column != null) {
+				String[] cols = column.split(",");
+				switch(cols.length) {
+				case 3 : map.put("col3",cols[2].trim());
+				case 2 : map.put("col2",cols[1].trim());
+				case 1 : map.put("col1",cols[0].trim());
+				}
+			}
 			return session.getMapper(cls).list(map);
 		} catch (Exception e) {
 			e.printStackTrace();

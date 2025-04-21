@@ -20,8 +20,20 @@ public interface BoardMapper {
 			+ "values(#{num}, #{writer}, #{pass}, #{title}, #{content}, #{file1}, now(), 0, #{grp}, #{grplevel}, #{grpstep}, #{boardid}) ")
 	int insert(Board board);
 
-	@Select("select count(*) from board where boardid = #{value}")
-	int count(String boardid);
+	String sqlcol="<if test = 'column != null'>"
+			+ "<if test = 'col1 != null'> and ( ${col1} like '%${find}%' </if>"
+			+ "<if test = 'col2 == null'> ) </if>"
+			+ "<if test = 'col2 != null'> or ${col2} like '%${find}%' </if>"
+			+ "<if test = 'col2 != null and col3 == null'> ) </if>"
+			+ "<if test = 'col3 != null '> or ${col3} like '%${find}%' ) </if>"
+			+ "</if>";
+	@Select({
+		"<script>"+
+		"select count(*) from board where boardid = #{boardid}"+
+		sqlcol+
+		"</script>"
+		})
+	int count(Map<String, Object> map);
 
 /*
 	 grp 값과  num 값이 같다
@@ -33,8 +45,12 @@ public interface BoardMapper {
 	 2 	=> 3
 	 1	=> 4
 */
-	@Select("select * from board where boardid=#{boardid}" 
-			+ " order by grp desc, grpstep asc limit #{start},#{limit}")
+	@Select({
+		"<script>"+
+			"select * from board where boardid=#{boardid} " +sqlcol
+			+ " order by grp desc, grpstep asc limit #{start},#{limit}"+
+			"</script>"
+			})
 	List<Board> list(Map<String, Object> map);
 	
 	@Select("select * from board where num = #{value}")
