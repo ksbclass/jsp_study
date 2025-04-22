@@ -1,13 +1,12 @@
-<%@page import="java.util.Random"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%-- /webapp/test0421/test1.jsp
+    0~99사이의 임의의 수 10개를 ,를 이용하여 출력하기 --%>    
 <%
-	Random rand = new Random();
-	for(int i=0;i<10; i++) {
-		int num = rand.nextInt(100);
-		out.print(num);
-		if(i<9){
-			out.print(",");
-		}
-	}
+   String result = "";
+   for(int i=1;i<=10;i++) {
+	   int n = (int)(Math.random()*100);
+	   result += n+((i==10)?"":",");
+   }
 %>
+<%=result %>

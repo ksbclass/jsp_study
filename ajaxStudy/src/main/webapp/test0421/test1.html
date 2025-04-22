@@ -7,27 +7,28 @@
 <head>
 <meta charset="UTF-8">
 <title>ajax Test</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body><div id="result"></div>
-<button type="button" onclick="getMaxNum()">가장큰값</button>
 <script type="text/javascript">
-	function getMaxNum() {
-		const xhttp = new XMLHttpRequest();
-		xhttp.open("GET","test1.jsp",true);
-		xhttp.send(); 
-		xhttp.onreadystatechange = function() {
-			if(this.readyState == 4 && this.status == 200) {
-				const  num = xhttp.responseText.split(",")
-				const arr = []
-				for(let i = 0; i < num.length; i++) {
-					const parsedNum = Number(num[i]);
-					arr.push(parsedNum)
-				}
-				const maxnum = Math.max(...arr);
-				document.querySelector("#result").innerHTML = "가장 큰 값 : " +maxnum;
-			}
-		}
-	}
+const xhttp = new XMLHttpRequest()
+xhttp.open("GET","test1.jsp")
+xhttp.send()
+xhttp.onreadystatechange=callBack
+
+function callBack() {
+	  if(xhttp.readyState == 4 && xhttp.status == 200) {
+		  const nums = xhttp.responseText.split(",")
+		  let max = parseInt(nums[0].trim())
+		  let min = parseInt(nums[0].trim())
+		  for(let i=1;i < nums.length;i++) {
+			  nums[i] = parseInt(nums[i].trim())
+			  if(max < nums[i]) max = nums[i]
+			  if(min > nums[i]) min = nums[i]
+		  }
+		  document.querySelector("#result").innerHTML = 
+	  "<strong> ["+this.responseText  +"]중 최대값:"+max+"<br>["
+	   + this.responseText  +"]중 최소값:"+min+"</strong>"
+	  }
+}
 </script>
 </body></html>
