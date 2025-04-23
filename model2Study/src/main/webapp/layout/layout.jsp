@@ -13,6 +13,8 @@
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
 
 	<!-- include summernote css/js -->
 	<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
@@ -83,6 +85,16 @@
 </nav>
 
 <div class="container" style="margin-top:30px">
+<div class="row">
+	<div class="col" style="border:1px solid #EEEEEE">
+	<%--작성자별 게시물 등록 건수 파이 그래프 : 가장 많이 작성한 작성자 5명 --%>
+		<canvas id="canvas1" style="width:100%" ></canvas>
+	</div>
+	<div class="col" style="border:1px solid #EEEEEE">
+	<%--최근 작성일자별 게시물 등록 건수 막대 그래프 : 최근 7일간 결과 --%>
+		<canvas id="canvas2" style="width:100%"></canvas>
+	</div>
+</div>
  <sitemesh:write property="body" />  
 </div>
 <footer class="footer">
@@ -127,11 +139,14 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script type="text/javascript">
 $(function() {
+	piegraph();
+	bargraph();
 	// ajax을 이용하여 시도 데이터 조회하기
 	let divid;
 	let si;
 	$.ajax({
 		url : "${path}/ajax/select",
+	
 		success : function(data) {
 			// data : ["서울특별시","경기도",...]
 			let arr = JSON.parse(data)
@@ -147,56 +162,162 @@ $(function() {
 		}
 	})
 })
-function getText(selectid) {
-    const si = $("select[name=si]").val();
-    const gu = $("select[name=gu]").val();
-    const dong = $("select[name=dong]").val();
-    
-    if (selectid == 'gu' && si != '') {
-        $.ajax({
-            url: "${path}/ajax/select",
-            type: "GET",
-            data: {
-                name: 'gu',  
-                si: si       
-            },
-            success: function(data) {
-                let arr = JSON.parse(data);  
-                $.each(arr, function(i, item) {
-                    $("select[name=gu]").append(function() {
-                        return "<option>" + item + "</option>";
-                    });
-                });
-            },
-            error: function(e) {
-                alert("서버 오류 : " + e.status); 
-            }
-        });
-    } else if (selectid == 'dong' && gu != '') {
-        $.ajax({
-            url: "${path}/ajax/select",  
-            type: "GET",
-            data: {
-                name: 'dong',  
-                si: si,      
-                gu: gu        
-            },
-            success: function(data) {
-                let arr = JSON.parse(data);  
-                $.each(arr, function(i, item) {
-                    $("select[name=dong]").append(function() {
-                        return "<option>" + item + "</option>";
-                    });
-                });
-            },
-            error: function(e) {
-                alert("서버 오류 : " + e.status);  
-            }
-        });
+function getText(name) {
+	let city = $("select[name='si']").val()
+	let gun = $("select[name='gu']").val()
+	let disname;
+    let toptext='구군을 선택하세요'
+    let params = ''
+    if(name=='si') {
+    	params = "si=" + city.trim()
+    	disname = "gu"
+    } else if (name=='gu') {
+    	params = "si=" + city.trim()+"&gu="+gun.trim()
+    	disname = "dong"
+    	toptext='동리를 선택하세요'
+    } else {
+    	return 
     }
+    $.ajax({
+    	url : "${path}/ajax/select",
+    	type : "POST",
+    	data:params,
+    	success : function(data) {
+    		let arr = JSON.parse(data)
+    		$("select[name="+disname+"] option").remove()
+    		$("select[name="+disname+"]").append(function(){
+    			return "<option value=''>"+toptext+"</option>"
+    		})
+    		$.each(arr,function(i,item){
+        		$("select[name="+disname+"]").append(function(){
+        			return "<option>"+item+"</option>"
+    		    })
+    		})
+    	   },
+    	error : function(e){
+    		alert("서버오류:"+e.status)
+    	}
+    })	
 }
-
-
+function piegraph() {
+	$.ajax("${path}/ajax/graph1",{
+		success : function(data) {
+			// data : [{"cnt":3,"writer":"홍길동"},{"cnt":1,"writer":"가가가"},{"cnt":1,"writer":"33"},{"cnt":1,"writer":"a2fd1asd2f1asd"},{"cnt":1,"writer":"1213564"}]
+			pieGraphPrint(data);
+		},
+    	error : function(e){
+    		alert("서버오류:"+e.status)
+    	}
+	})
+}
+function bargraph() {
+	$.ajax("${path}/ajax/graph2",{
+		success : function(data) {
+			// data : [{"cnt":3,"writer":"홍길동"},{"cnt":1,"writer":"가가가"},{"cnt":1,"writer":"33"},{"cnt":1,"writer":"a2fd1asd2f1asd"},{"cnt":1,"writer":"1213564"}]
+			pieGraphPrint2(data);
+		},
+    	error : function(e){
+    		alert("서버오류:"+e.status)
+    	}
+	})
+}
+function pieGraphPrint2(data) {
+	let rows = JSON.parse(data);
+	let regdate = []
+	let datas = []
+	let colors = []
+	$.each(rows,function(i,item){
+		regdate[i] = item.regdate;
+		datas[i] = item.cnt;
+		colors[i] = randomColor(1);
+	})
+	let config = {
+		type : "bar",
+		data : {
+			datasets : [{ 
+				data : datas,
+				backgroundColor : colors
+			}],
+			labels : regdate
+		},
+		options : {
+			responsive : true,
+			legend : {
+				display : false,
+				position : "right"
+			},
+			title : {
+				display : true,
+				text : "최근 작성일자별 게시물 등록 건수(1주일)",
+				position : "top"
+			},
+			scales : {
+				xAxes : [
+					{display : true,
+					scaleLabel : {
+						display : true,
+						labelString : "날짜"}
+					}],
+				yAxes : [{
+					display : true,
+					scaleLabel : {
+						display : true
+					},
+					ticks :{
+						beginAtZero :true
+					}
+				
+				}]
+			}
+		}
+	}
+	let ctx = document.querySelector("#canvas2");
+	new Chart(ctx,config)
+}
+function pieGraphPrint(data) {
+	let rows = JSON.parse(data); // 서버에서 JSON 형태로 데이터 전송
+	let writers = []  			// 작성자목록, 라벨값
+	let datas = []  			// 파이 데이터값
+	let colors = []				// 색상값 배열
+	$.each(rows,function(i,item){
+		// item : {"cnt":3 "writer":"홍길동"}
+		writers[i] = item.writer; // [홍길동]
+		datas[i] = item.cnt		  // [3]
+		colors[i] = randomColor(1);
+	})
+	let config = {
+		type : "pie",
+		data : {
+			datasets : [{
+				data : datas,
+				backgroundColor : colors
+			}],
+			labels : writers
+		},
+		options : {
+			responsive : true,
+			legend : {
+				display : true,
+				position : "right"
+			},
+			title : {
+				display : true,
+				text : "게시물 작성자별 등록 건수(최대 5명)",
+				position : "top"
+			}
+		}
+	}
+	let ctx = document.querySelector("#canvas1");
+	new Chart(ctx,config)
+}
+function randomColorFactor() {
+	return Math.round(Math.random()*255)
+}
+function randomColor(opa) {
+	return "rgba("+ randomColorFactor()+","
+	+ randomColorFactor() + ","+randomColorFactor()+","
+	+(opa || ".3")+")";
+}
 </script>
 </body>
 </html>

@@ -82,6 +82,22 @@ public interface BoardMapper {
 	@Select("select count(*) from board WHERE grp = #{num} and grplevel != 0 and grpstep !=0")
 	int check(int num);
 
+	@Select("select writer,count(*) cnt from board "
+			+ "group by writer "
+			+ "order by cnt desc "
+			+ "limit 0,5")
+	List<Map<String, Object>> graph1();
+	/*
+	 * Map<컬럼명,컬럼값> 형태로 db에서 읽어서 전달
+	 * {"writer":"홍길동", "cnt" : 3}
+	 * {"writer":"가가가", "cnt" : 1}
+	 */
+	@Select("SELECT substr(regdate,1,10) AS regdate ,COUNT(*) AS cnt "
+			+ "FROM board "
+			+ "group by substr(regdate,1,10) "
+			+ "order by substr(regdate,1,10) asc")
+	List<Map<String, Object>> graph2();
+
 	
 
 	
