@@ -90,13 +90,17 @@
 
 <div class="container" style="margin-top:30px">
 <div class="row">
-	<div class="col" style="border:1px solid #EEEEEE">
+	<div class="col-4" style="border:1px solid #EEEEEE">
 	<%--작성자별 게시물 등록 건수 파이 그래프 : 가장 많이 작성한 작성자 5명 --%>
 		<canvas id="canvas1" style="width:100%" ></canvas>
 	</div>
-	<div class="col" style="border:1px solid #EEEEEE">
+	<div class="col-4" style="border:1px solid #EEEEEE">
 	<%--최근 작성일자별 게시물 등록 건수 막대 그래프 : 최근 7일간 결과 --%>
 		<canvas id="canvas2" style="width:100%"></canvas>
+	</div>
+	<div class="col-4" style="border:1px solid #EEEEEE">
+	<%--수출입은행 환율정보--%>
+		<div id="exchange"></div>
 	</div>
 </div>
  <sitemesh:write property="body" />  
@@ -146,6 +150,7 @@
 $(function() {
 	piegraph();
 	bargraph();
+	exchangeRate();
 	// ajax을 이용하여 시도 데이터 조회하기
 	let divid;
 	let si;
@@ -167,6 +172,16 @@ $(function() {
 		}
 	})
 })
+function exchangeRate() {
+	$.ajax("${path}/ajax/exchange",{
+		success : function(data) {
+			$("#exchange").html(data)
+		},
+		error: function(e) {
+			alert("환율 조회 오류 : " + e.status)
+		}
+	})
+}
 function getText(name) {
 	let city = $("select[name='si']").val()
 	let gun = $("select[name='gu']").val()

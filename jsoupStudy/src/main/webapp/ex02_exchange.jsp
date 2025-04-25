@@ -21,6 +21,7 @@
 </head>
 <body>
 <%
+
 String url = "https://www.koreaexim.go.kr/wg/HPHKWG057M01";
 String line = "";
 Document doc = null;
