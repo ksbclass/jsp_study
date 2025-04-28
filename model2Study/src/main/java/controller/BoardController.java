@@ -17,10 +17,13 @@ import gdu.mskim.MskimRequestMapping;
 import gdu.mskim.RequestMapping;
 import model.board.Board;
 import model.board.BoardDao;
+import model.comment.Comment;
+import model.comment.CommentDao;
 
 @WebServlet(urlPatterns = { "/board/*" }, initParams = { @WebInitParam(name = "view", value = "/view/") })
 public class BoardController extends MskimRequestMapping {
 	private BoardDao dao = new BoardDao();
+	private CommentDao commdao = new CommentDao();
 
 	public String noticecheck (HttpServletRequest request, HttpServletResponse response) {
 		String boardid = (String)request.getSession().getAttribute("boardid");
@@ -197,17 +200,24 @@ public class BoardController extends MskimRequestMapping {
 	@RequestMapping("info")
 	public String info(HttpServletRequest request, HttpServletResponse response) {
 		int num = Integer.parseInt(request.getParameter("num"));
+		String readcnt = request.getParameter("readcnt");
 //		String boardid = (String)request.getSession().getAttribute("boardid");
+		// b : num 값의 게시물 데이터 저장
 		Board b = dao.selectOne(num);
+		// readcnt 파라미터의 값이 "f"인 경우 조회수 증가 안함.
+		if(readcnt == null || !readcnt.trim().equals("f")) {
+			dao.readcntAdd(num); // 조회수 증가
+		}
 		String boardid = b.getBoardid();
-		dao.readcntAdd(num);
 		String boardName = "공지사항";
 		if(boardid.equals("2")) {
 			boardName = "자유게시판";
 		}
+		List<Comment> commlist = commdao.list(num);
 		request.setAttribute("b",b);
 		request.setAttribute("boardName", boardName);
 		request.setAttribute("boardid", boardid);
+		request.setAttribute("commlist", commlist); // 댓글 목록 view로 전달
 		return "board/info";
 	}
 	@RequestMapping("replyForm")
@@ -364,5 +374,36 @@ public class BoardController extends MskimRequestMapping {
 		request.setAttribute("url", "deleteForm?num="+num);
 		return "alert";
 		
+	}
+	@RequestMapping("comment")
+	public String comment(HttpServletRequest request, HttpServletResponse response) {
+		Comment comm = new Comment();
+		comm.setNum(Integer.parseInt(request.getParameter("num")));
+		comm.setWriter(request.getParameter("writer"));
+		comm.setContent(request.getParameter("content"));
+		int seq = commdao.maxseq(comm.getNum());
+		comm.setSeq(++seq);
+		if(commdao.insert(comm)) {
+			return "redirect:info?num="+comm.getNum();
+		}
+		request.setAttribute("msg","답글 등록시 오류 발생");
+		request.setAttribute("url", "info?num="+comm.getNum()+"&readcnt=f");
+		return "alert";
+	}
+	/*
+	 삭제는 누구든지 삭제 가능 : 수정 필요함
+	 비밀번호를 입력,로그인 정보를 갖고있는지 판단이 필요함. 추가 필요함
+	 */
+	@RequestMapping("commdel")
+	public String commdel(HttpServletRequest request, HttpServletResponse response) {
+		int num = Integer.parseInt(request.getParameter("num"));
+		int seq = Integer.parseInt(request.getParameter("seq"));
+		String url = "info?num="+num+"&readcnt=f";
+		if(commdao.delete(num,seq)) {
+			return "redirect:"+url;
+		}
+		request.setAttribute("msg","답글 삭제 오류 발생");
+		request.setAttribute("url",url);
+		return "alert";
 	}
 }
